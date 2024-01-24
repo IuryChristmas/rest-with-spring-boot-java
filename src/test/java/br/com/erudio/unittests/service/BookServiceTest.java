@@ -59,6 +59,7 @@ public class BookServiceTest {
         assertEquals("Author Test1", result.getAuthor());
         assertEquals("Title Test1", result.getTitle());
         assertEquals(new BigDecimal(551), result.getPrice());
+        assertNotNull(result.getLaunchDate());
     }
 
     @Test
@@ -79,6 +80,7 @@ public class BookServiceTest {
         assertEquals("Author Test1", result.getAuthor());
         assertEquals("Title Test1", result.getTitle());
         assertEquals(new BigDecimal(551), result.getPrice());
+        assertNotNull(result.getLaunchDate());
     }
 
     @Test
@@ -114,6 +116,7 @@ public class BookServiceTest {
         assertEquals("Author Test1", result.getAuthor());
         assertEquals("Title Test1", result.getTitle());
         assertEquals(new BigDecimal(551), result.getPrice());
+        assertNotNull(result.getLaunchDate());
     }
 
     @Test
@@ -155,6 +158,7 @@ public class BookServiceTest {
         assertEquals("Author Test1", bookOne.getAuthor());
         assertEquals("Title Test1", bookOne.getTitle());
         assertEquals(new BigDecimal(551), bookOne.getPrice());
+        assertNotNull(bookOne.getLaunchDate());
 
         var bookFour = people.get(4);
 
@@ -164,6 +168,7 @@ public class BookServiceTest {
         assertEquals("Author Test4", bookFour.getAuthor());
         assertEquals("Title Test4", bookFour.getTitle());
         assertEquals(new BigDecimal(554), bookFour.getPrice());
+        assertNotNull(bookFour.getLaunchDate());
 
         var bookSeven = people.get(7);
 
@@ -173,5 +178,6 @@ public class BookServiceTest {
         assertEquals("Author Test7", bookSeven.getAuthor());
         assertEquals("Title Test7", bookSeven.getTitle());
         assertEquals(new BigDecimal(557), bookSeven.getPrice());
+        assertNotNull(bookSeven.getLaunchDate());
     }
 }
