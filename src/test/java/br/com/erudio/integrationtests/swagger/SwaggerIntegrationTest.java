@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class StartupApplicationTests extends AbstractIntegrationTest {
+public class SwaggerIntegrationTest extends AbstractIntegrationTest {
 
 	@Test
 	public void shouldDisplaySwaggerUiPage() {
@@ -18,12 +18,12 @@ public class StartupApplicationTests extends AbstractIntegrationTest {
 				.basePath("/swagger-ui/index.html")
 				.port(TestConfigs.SERVER_PORT)
 				.when()
-					.get()
+				.get()
 				.then()
-					.statusCode(200)
+				.statusCode(200)
 				.extract()
-					.body()
-						.asString();
+				.body()
+				.asString();
 		assertTrue(content.contains("Swagger UI"));
 	}
 
