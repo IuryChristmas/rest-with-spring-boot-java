@@ -1,26 +1,36 @@
 package br.com.erudio.config;
 
-import br.com.erudio.security.jwt.JwtConfigurer;
-import br.com.erudio.security.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
+    @Value("${jwt.public.key}")
+    private RSAPublicKey key;
+    @Value("${jwt.private.key}")
+    private RSAPrivateKey priv;
+
+    /*@Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @Bean
@@ -32,22 +42,11 @@ public class SecurityConfig {
         return passwordEncoder;
     }
 
-    /*protected void configure(HttpSecurity http) throws Exception {
-        http
-                .httpBasic()
-                .disable()
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/auth/signing", "/auth/refresh", "/api-docs/**", "/swagger-ui.html**").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                .requestMatchers("/users").denyAll()
-                .and()
-                .cors()
-                .and()
-                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .apply(new JwtConfigurer(jwtTokenProvider));
-
-    }*/
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .build();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -59,6 +58,38 @@ public class SecurityConfig {
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> new JwtConfigurer(jwtTokenProvider))
                 .build();
+    }*/
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        /*requestMatchers("/api/**").authenticated()
+                                .requestMatchers("/users").denyAll()*/
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        auth -> auth.requestMatchers("/auth/signing", "/auth/refresh", "/api-docs/**", "/swagger-ui").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .oauth2ResourceServer(
+                        conf -> conf.jwt(Customizer.withDefaults())
+                ).build();
     }
 
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(key).build();
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder() {
+        var jwk = new RSAKey.Builder(key).privateKey(priv).build();
+        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

@@ -1,6 +1,6 @@
 package br.com.erudio.security.jwt;
 
-import jakarta.servlet.FilterChain;
+/*import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -33,4 +33,4 @@ public class JwtTokenFilter extends GenericFilterBean {
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
-}
+}*/

@@ -1,6 +1,6 @@
 package br.com.erudio.controller;
 
-import br.com.erudio.data.vo.v1.security.AccountCredentialsVO;
+/*import br.com.erudio.data.vo.v1.security.AccountCredentialsVO;
 import br.com.erudio.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,3 +41,4 @@ public class AuthController {
                 || data.getPassword() == null || data.getPassword().isBlank();
     }
 }
+*/

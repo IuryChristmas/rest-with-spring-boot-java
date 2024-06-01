@@ -1,6 +1,6 @@
 package br.com.erudio.service;
 
-import br.com.erudio.data.vo.v1.security.AccountCredentialsVO;
+/*import br.com.erudio.data.vo.v1.security.AccountCredentialsVO;
 import br.com.erudio.data.vo.v1.security.TokenVO;
 import br.com.erudio.repository.UserRepository;
 import br.com.erudio.security.jwt.JwtTokenProvider;
@@ -43,4 +43,4 @@ public class AuthService {
             throw new BadCredentialsException("Invalid username/password supplied!");
         }
     }
-}
+}*/

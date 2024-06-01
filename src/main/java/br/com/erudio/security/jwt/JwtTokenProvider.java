@@ -1,6 +1,6 @@
 package br.com.erudio.security.jwt;
 
-import br.com.erudio.data.vo.v1.security.TokenVO;
+/*import br.com.erudio.data.vo.v1.security.TokenVO;
 import br.com.erudio.exceptions.InvalidJwtAuthenticationException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -102,4 +102,4 @@ public class JwtTokenProvider {
             throw new InvalidJwtAuthenticationException("Expired or invalid token!");
         }
     }
-}
+}*/
