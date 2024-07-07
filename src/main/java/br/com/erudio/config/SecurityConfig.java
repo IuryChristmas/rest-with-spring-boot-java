@@ -30,44 +30,12 @@ public class SecurityConfig {
     @Value("${jwt.private.key}")
     private RSAPrivateKey priv;
 
-    /*@Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        Map<String, PasswordEncoder> enconders = new HashMap<>();
-        enconders.put("bcrypt", new BCryptPasswordEncoder());
-        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("bcrypt", enconders);
-        passwordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
-        return passwordEncoder;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .build();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/signing", "/auth/refresh", "/api-docs/**", "/swagger-ui.html**")
-                        .permitAll()
-                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/users").denyAll())
-                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> new JwtConfigurer(jwtTokenProvider))
-                .build();
-    }*/
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        /*requestMatchers("/api/**").authenticated()
-                                .requestMatchers("/users").denyAll()*/
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/auth/signing", "/auth/refresh", "/api-docs/**", "/swagger-ui").permitAll()
+                        auth -> auth.requestMatchers("/auth/signing", "/auth/refresh/**", "/api-docs/**", "/swagger-ui").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -91,5 +59,9 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    public RSAPublicKey getKey() {
+        return key;
     }
 }
