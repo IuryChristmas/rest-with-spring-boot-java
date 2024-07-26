@@ -25,46 +25,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    /*@Value("${jwt.public.key}")
-    private RSAPublicKey key;
-    @Value("${jwt.private.key}")
-    private RSAPrivateKey priv;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/auth/signing", "/auth/refresh/**", "/api-docs/**", "/swagger-ui").permitAll()
-                                .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults())
-                .oauth2ResourceServer(
-                        conf -> conf.jwt(Customizer.withDefaults())
-                ).build();
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(key).build();
-    }
-
-    @Bean
-    public JwtEncoder jwtEncoder() {
-        var jwk = new RSAKey.Builder(key).privateKey(priv).build();
-        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwks);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    public RSAPublicKey getKey() {
-        return key;
-    }*/
-
     @Autowired
     private JwtTokenProvider tokenProvider;
 
