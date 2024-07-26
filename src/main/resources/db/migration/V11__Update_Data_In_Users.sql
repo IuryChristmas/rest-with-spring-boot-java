@@ -1,2 +1,0 @@
-UPDATE `users` SET `password`='$2a$12$FNCNJLhukY4ODKRWcbuAjeP5Qb00s0lGTJJlmgUWleGOtJPbcxFoO' WHERE  `id`=1;
-UPDATE `users` SET `password`='$2a$12$FNCNJLhukY4ODKRWcbuAjeP5Qb00s0lGTJJlmgUWleGOtJPbcxFoO' WHERE  `id`=2;
