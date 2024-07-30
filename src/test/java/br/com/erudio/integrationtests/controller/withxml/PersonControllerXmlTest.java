@@ -1,4 +1,4 @@
-package br.com.erudio.integrationtests.controller.withjson;
+package br.com.erudio.integrationtests.controller.withxml;
 
 import br.com.erudio.configs.TestConfigs;
 import br.com.erudio.integrationtests.testscontainers.AbstractIntegrationTest;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PersonControllerJsonTest extends AbstractIntegrationTest {
+public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static ObjectMapper objectMapper;
@@ -43,7 +43,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		var accessToken = given()
 				.basePath("/auth/signin")
 					.port(TestConfigs.SERVER_PORT)
-					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+					.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.body(user)
 					.when()
 				.post()
@@ -69,7 +69,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		mockPerson();
 
 		var content = given().spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
 				.body(personVO)
 				.when()
@@ -102,7 +102,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		mockPerson();
 
 		var content = given().spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
 				.body(personVO)
 				.when()
@@ -123,7 +123,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		mockPerson();
 
 		var content = given().spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
 				.pathParam("id", personVO.getId())
 				.when()
@@ -156,7 +156,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		mockPerson();
 
 		var content = given().spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
 				.pathParam("id", personVO.getId())
 				.when()
