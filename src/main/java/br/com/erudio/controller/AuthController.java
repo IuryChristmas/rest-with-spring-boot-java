@@ -20,10 +20,7 @@ public class AuthController {
 
     @SuppressWarnings("rawtypes")
     @Operation(summary = "Authenticates a user and returns a token")
-    @PostMapping(value = "/signin", produces = {
-            MediaType.APPLICATION_JSON,
-            MediaType.APPLICATION_XML,
-            MediaType.APPLICATION_YML})
+    @PostMapping(value = "/signin")
     public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {
         if (checkIfParamsIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
@@ -34,10 +31,7 @@ public class AuthController {
 
     @SuppressWarnings("rawtypes")
     @Operation(summary = "Refresh token for authenticated user and returns a token")
-    @PutMapping(value = "/refresh/{username}", produces = {
-            MediaType.APPLICATION_JSON,
-            MediaType.APPLICATION_XML,
-            MediaType.APPLICATION_YML})
+    @PutMapping(value = "/refresh/{username}")
     public ResponseEntity refreshToken(@PathVariable("username") String username,
                                        @RequestHeader("Authorization") String refreshToken) {
         if (checkIfParamsIsNotNull(username, refreshToken))
