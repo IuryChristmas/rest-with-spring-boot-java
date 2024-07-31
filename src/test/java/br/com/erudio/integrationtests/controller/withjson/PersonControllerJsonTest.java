@@ -187,29 +187,29 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 				.body()
 				.asString();
 
-		List<PersonVO> persistedPersons = objectMapper.readerForListOf(PersonVO.class).readValue(content);
+		List<PersonVO> people = objectMapper.readerForListOf(PersonVO.class).readValue(content);
 
-		assertNotNull(persistedPersons);
-		assertEquals(6, persistedPersons.size());
-		assertNotNull(persistedPersons.get(0).getId());
-		assertNotNull(persistedPersons.get(0).getFirstName());
-		assertNotNull(persistedPersons.get(0).getLastName());
-		assertNotNull(persistedPersons.get(0).getAddress());
-		assertNotNull(persistedPersons.get(0).getGender());
-		assertTrue(persistedPersons.get(0).getId() > 0);
-		assertEquals("Iury Christmas", persistedPersons.get(0).getFirstName());
-		assertEquals("R. Margarida Maria - Fortaleza CE", persistedPersons.get(0).getAddress());
-		assertEquals("Male", persistedPersons.get(0).getGender());
+		assertNotNull(people);
+		assertEquals(6, people.size());
+		assertNotNull(people.get(0).getId());
+		assertNotNull(people.get(0).getFirstName());
+		assertNotNull(people.get(0).getLastName());
+		assertNotNull(people.get(0).getAddress());
+		assertNotNull(people.get(0).getGender());
+		assertTrue(people.get(0).getId() > 0);
+		assertEquals("Iury Christmas", people.get(0).getFirstName());
+		assertEquals("R. Margarida Maria - Fortaleza CE", people.get(0).getAddress());
+		assertEquals("Male", people.get(0).getGender());
 
-		assertNotNull(persistedPersons.get(1).getId());
-		assertNotNull(persistedPersons.get(1).getFirstName());
-		assertNotNull(persistedPersons.get(1).getLastName());
-		assertNotNull(persistedPersons.get(1).getAddress());
-		assertNotNull(persistedPersons.get(1).getGender());
-		assertEquals("Andrea", persistedPersons.get(1).getFirstName());
-		assertEquals("Lima", persistedPersons.get(1).getLastName());
-		assertEquals("R. Cristal - Fortaleza CE", persistedPersons.get(1).getAddress());
-		assertEquals("Female", persistedPersons.get(1).getGender());
+		assertNotNull(people.get(1).getId());
+		assertNotNull(people.get(1).getFirstName());
+		assertNotNull(people.get(1).getLastName());
+		assertNotNull(people.get(1).getAddress());
+		assertNotNull(people.get(1).getGender());
+		assertEquals("Andrea", people.get(1).getFirstName());
+		assertEquals("Lima", people.get(1).getLastName());
+		assertEquals("R. Cristal - Fortaleza CE", people.get(1).getAddress());
+		assertEquals("Female", people.get(1).getGender());
 	}
 
 	@Test
@@ -291,26 +291,19 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	@Test
 	@Order(9)
 	public void testDelete() throws JsonProcessingException {
-		mockPerson();
-
-		var content = given().spec(specification)
+		given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
 				.pathParam("id", personVO.getId())
 				.when()
 				.delete("{id}")
 				.then()
-				.statusCode(204)
-				.extract()
-				.body()
-				.asString();
+				.statusCode(204);
 	}
 
 	@Test
 	@Order(10)
 	public void testDeleteWithWrongOrigin() {
-		mockPerson();
-
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
