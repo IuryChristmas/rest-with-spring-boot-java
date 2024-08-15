@@ -2,6 +2,7 @@ package br.com.erudio.controller;
 
 import br.com.erudio.data.vo.v1.security.AccountCredentialsVO;
 import br.com.erudio.service.AuthService;
+import br.com.erudio.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
