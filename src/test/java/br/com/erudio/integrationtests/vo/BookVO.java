@@ -1,16 +1,13 @@
-package br.com.erudio.data.vo.v1;
+package br.com.erudio.integrationtests.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@JsonPropertyOrder({"id", "author", "launchDate", "price", "title"})
-public class BookVO extends RepresentationModel<BookVO> implements Serializable {
+public class BookVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
