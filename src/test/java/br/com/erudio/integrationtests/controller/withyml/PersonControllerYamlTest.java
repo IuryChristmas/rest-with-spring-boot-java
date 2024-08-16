@@ -100,6 +100,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(createdPerson.getLastName());
 		assertNotNull(createdPerson.getAddress());
 		assertNotNull(createdPerson.getGender());
+		assertTrue(createdPerson.getEnabled());
 		assertTrue(createdPerson.getId() > 0);
 		assertEquals("Richard", createdPerson.getFirstName());
 		assertEquals("Stallman", createdPerson.getLastName());
@@ -163,6 +164,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 		assertTrue(persistedPerson.getId() > 0);
 		assertEquals("Richard", persistedPerson.getFirstName());
 		assertEquals("Stallman", persistedPerson.getLastName());
@@ -197,6 +199,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(people.get(0).getLastName());
 		assertNotNull(people.get(0).getAddress());
 		assertNotNull(people.get(0).getGender());
+		assertTrue(people.get(0).getEnabled());
 		assertTrue(people.get(0).getId() > 0);
 		assertEquals("Iury Christmas", people.get(0).getFirstName());
 		assertEquals("R. Margarida Maria - Fortaleza CE", people.get(0).getAddress());
@@ -244,6 +247,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(createdPerson.getLastName());
 		assertNotNull(createdPerson.getAddress());
 		assertNotNull(createdPerson.getGender());
+		assertTrue(createdPerson.getEnabled());
 		assertTrue(createdPerson.getId() > 0);
 		assertEquals("Richard", createdPerson.getFirstName());
 		assertEquals("Stall", createdPerson.getLastName());
@@ -253,7 +257,44 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(6)
-	public void testDelete() throws JsonProcessingException {
+	public void testDisablePersonyId() throws JsonProcessingException {
+		PersonVO persistedPerson = given()
+				.config(RestAssuredConfig.config()
+						.encoderConfig(EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)))
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
+				.pathParam("id", personVO.getId())
+				.when()
+				.patch("{id}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.as(PersonVO.class, objectMapper);
+
+		personVO = persistedPerson;
+
+		assertNotNull(persistedPerson);
+		assertNotNull(persistedPerson.getId());
+		assertNotNull(persistedPerson.getFirstName());
+		assertNotNull(persistedPerson.getLastName());
+		assertNotNull(persistedPerson.getAddress());
+		assertNotNull(persistedPerson.getGender());
+		assertFalse(persistedPerson.getEnabled());
+
+		assertTrue(persistedPerson.getId() > 0);
+		assertEquals("Richard", persistedPerson.getFirstName());
+		assertEquals("Stall", persistedPerson.getLastName());
+		assertEquals("New York City, New York, US", persistedPerson.getAddress());
+		assertEquals("Male", persistedPerson.getGender());
+	}
+
+	@Test
+	@Order(7)
+	public void testDelete() {
 		mockPerson();
 
 		given()
@@ -276,6 +317,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		personVO.setLastName("Stallman");
 		personVO.setAddress("New York City, New York, US");
 		personVO.setGender("Male");
+		personVO.setEnabled(Boolean.TRUE);
 	}
 
 }
