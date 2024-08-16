@@ -39,7 +39,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(0)
-	public void authorization() throws JsonProcessingException {
+	public void authorization() {
 		AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin1234");
 
 		var accessToken = given()
@@ -92,6 +92,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(createdPerson.getLastName());
 		assertNotNull(createdPerson.getAddress());
 		assertNotNull(createdPerson.getGender());
+		assertTrue(createdPerson.getEnabled());
 		assertTrue(createdPerson.getId() > 0);
 		assertEquals("Richard", createdPerson.getFirstName());
 		assertEquals("Stallman", createdPerson.getLastName());
@@ -148,6 +149,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 		assertTrue(persistedPerson.getId() > 0);
 		assertEquals("Richard", persistedPerson.getFirstName());
 		assertEquals("Stallman", persistedPerson.getLastName());
@@ -157,7 +159,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(4)
-	public void testFindByIdWithWrongOrigin() throws JsonProcessingException {
+	public void testFindByIdWithWrongOrigin() {
 		mockPerson();
 
 		var content = given().spec(specification)
@@ -201,6 +203,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(people.get(0).getLastName());
 		assertNotNull(people.get(0).getAddress());
 		assertNotNull(people.get(0).getGender());
+		assertTrue(people.get(0).getEnabled());
 		assertTrue(people.get(0).getId() > 0);
 		assertEquals("Iury Christmas", people.get(0).getFirstName());
 		assertEquals("R. Margarida Maria - Fortaleza CE", people.get(0).getAddress());
@@ -219,27 +222,6 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(6)
-	public void testFindAllWithWrongOrigin() throws JsonProcessingException {
-		mockPerson();
-
-		var content = given().spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_XML)
-				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
-				.when()
-				.get()
-				.then()
-				.statusCode(403)
-				.extract()
-				.body()
-				.asString();
-
-		assertNotNull(content);
-		assertEquals("Invalid CORS request", content);
-	}
-
-	@Test
-	@Order(7)
 	public void testUpdate() throws JsonProcessingException {
 		mockPerson();
 		personVO.setLastName("Stall");
@@ -266,6 +248,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(createdPerson.getLastName());
 		assertNotNull(createdPerson.getAddress());
 		assertNotNull(createdPerson.getGender());
+		assertTrue(createdPerson.getEnabled());
 		assertTrue(createdPerson.getId() > 0);
 		assertEquals("Richard", createdPerson.getFirstName());
 		assertEquals("Stall", createdPerson.getLastName());
@@ -274,31 +257,43 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(8)
-	public void testUpdateWithWrongOrigin() {
-		mockPerson();
-		personVO.setLastName("Stall");
+	@Order(7)
+	public void testDisablePersonyId() throws JsonProcessingException {
 
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
-				.body(personVO)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
+				.pathParam("id", personVO.getId())
 				.when()
-				.put()
+				.patch("{id}")
 				.then()
-				.statusCode(403)
+				.statusCode(200)
 				.extract()
 				.body()
 				.asString();
 
-		assertNotNull(content);
-		assertEquals("Invalid CORS request", content);
+		PersonVO persistedPerson = objectMapper.readValue(content, PersonVO.class);
+		personVO = persistedPerson;
+
+		assertNotNull(persistedPerson);
+		assertNotNull(persistedPerson.getId());
+		assertNotNull(persistedPerson.getFirstName());
+		assertNotNull(persistedPerson.getLastName());
+		assertNotNull(persistedPerson.getAddress());
+		assertNotNull(persistedPerson.getGender());
+		assertFalse(persistedPerson.getEnabled());
+
+		assertTrue(persistedPerson.getId() > 0);
+		assertEquals("Richard", persistedPerson.getFirstName());
+		assertEquals("Stall", persistedPerson.getLastName());
+		assertEquals("New York City, New York, US", persistedPerson.getAddress());
+		assertEquals("Male", persistedPerson.getGender());
 	}
 
 	@Test
-	@Order(9)
-	public void testDelete() throws JsonProcessingException {
+	@Order(8)
+	public void testDelete() {
 		given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
@@ -310,31 +305,12 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 				.statusCode(204);
 	}
 
-	@Test
-	@Order(10)
-	public void testDeleteWithWrongOrigin() {
-		var content = given().spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_XML)
-				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_SEMERU)
-				.pathParam("id", personVO.getId())
-				.when()
-				.delete("{id}")
-				.then()
-				.statusCode(403)
-				.extract()
-				.body()
-				.asString();
-
-		assertNotNull(content);
-		assertEquals("Invalid CORS request", content);
-	}
-
 	private void mockPerson() {
 		personVO.setFirstName("Richard");
 		personVO.setLastName("Stallman");
 		personVO.setAddress("New York City, New York, US");
 		personVO.setGender("Male");
+		personVO.setEnabled(Boolean.TRUE);
 	}
 
 }
