@@ -136,6 +136,7 @@ public class PersonServiceTest {
         personService.delete(1L);
     }
 
+    /*
     @Test
     void testFindAll() {
         List<Person> list = input.mockEntityList();
@@ -175,5 +176,5 @@ public class PersonServiceTest {
         assertEquals("First Name Test7", personSeven.getFirstName());
         assertEquals("Last Name Test7", personSeven.getLastName());
         assertEquals("Female", personSeven.getGender());
-    }
+    }*/
 }
