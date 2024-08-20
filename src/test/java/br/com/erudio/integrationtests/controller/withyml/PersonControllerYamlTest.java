@@ -6,6 +6,8 @@ import br.com.erudio.integrationtests.testscontainers.AbstractIntegrationTest;
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO;
 import br.com.erudio.integrationtests.vo.PersonVO;
 import br.com.erudio.integrationtests.vo.TokenVO;
+import br.com.erudio.integrationtests.vo.pagedmodels.PagedModelPerson;
+import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -17,9 +19,6 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -180,6 +179,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 						.encoderConfig(EncoderConfig.encoderConfig()
 								.encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)))
 				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
 				.spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
@@ -189,20 +189,21 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.statusCode(200)
 				.extract()
 				.body()
-				.as(PersonVO[].class, objectMapper);
+				.as(PagedModelPerson.class, objectMapper);
 
-		List<PersonVO> people = Arrays.asList(content);
+		var people = content.getContent();
+
 		assertNotNull(people);
-		assertEquals(6, people.size());
 		assertNotNull(people.get(0).getId());
 		assertNotNull(people.get(0).getFirstName());
 		assertNotNull(people.get(0).getLastName());
 		assertNotNull(people.get(0).getAddress());
 		assertNotNull(people.get(0).getGender());
-		assertTrue(people.get(0).getEnabled());
+		assertFalse(people.get(0).getEnabled());
 		assertTrue(people.get(0).getId() > 0);
-		assertEquals("Iury Christmas", people.get(0).getFirstName());
-		assertEquals("R. Margarida Maria - Fortaleza CE", people.get(0).getAddress());
+		assertEquals("Alvie", people.get(0).getFirstName());
+		assertEquals("Veldens", people.get(0).getLastName());
+		assertEquals("90 Morningstar Drive", people.get(0).getAddress());
 		assertEquals("Male", people.get(0).getGender());
 
 		assertNotNull(people.get(1).getId());
@@ -210,10 +211,10 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(people.get(1).getLastName());
 		assertNotNull(people.get(1).getAddress());
 		assertNotNull(people.get(1).getGender());
-		assertEquals("Andrea", people.get(1).getFirstName());
-		assertEquals("Lima", people.get(1).getLastName());
-		assertEquals("R. Cristal - Fortaleza CE", people.get(1).getAddress());
-		assertEquals("Female", people.get(1).getGender());
+		assertEquals("Alvie", people.get(1).getFirstName());
+		assertEquals("Stellman", people.get(1).getLastName());
+		assertEquals("2460 Dawn Alley", people.get(1).getAddress());
+		assertEquals("Male", people.get(1).getGender());
 	}
 
 	@Test
