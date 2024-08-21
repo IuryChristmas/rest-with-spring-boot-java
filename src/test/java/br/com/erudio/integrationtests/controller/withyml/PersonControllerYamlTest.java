@@ -312,6 +312,40 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.statusCode(204);
 	}
 
+	@Test
+	@Order(8)
+	public void testHATEOAS() {
+		var unthreatedContent = given()
+				.config(RestAssuredConfig.config()
+						.encoderConfig(EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)))
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
+				.spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		var content = unthreatedContent.replace("\n", "").replace("\r", "");
+
+		assertTrue(content.contains("rel: \"self\"    href: \"http://localhost:8888/api/person/v1/792\""));
+		assertTrue(content.contains("rel: \"self\"    href: \"http://localhost:8888/api/person/v1/269\""));
+		assertTrue(content.contains("rel: \"self\"    href: \"http://localhost:8888/api/person/v1/305\""));
+
+		assertTrue(content.contains("page:  size: 10  totalElements: 1005  totalPages: 101  number: 3"));
+		assertTrue(content.contains("rel: \"first\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=0&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("rel: \"prev\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=2&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("rel: \"self\"  href: \"http://localhost:8888/api/person/v1?page=3&size=10&direction=asc\""));
+		assertTrue(content.contains("rel: \"next\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=4&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("rel: \"last\"  href: \"http://localhost:8888/api/person/v1?direction=asc&page=100&size=10&sort=firstName,asc\""));
+	}
+
 	private void mockPerson() {
 		personVO.setFirstName("Richard");
 		personVO.setLastName("Stallman");
