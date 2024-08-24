@@ -5,6 +5,7 @@ import br.com.erudio.integrationtests.testscontainers.AbstractIntegrationTest;
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO;
 import br.com.erudio.integrationtests.vo.PersonVO;
 import br.com.erudio.integrationtests.vo.TokenVO;
+import br.com.erudio.integrationtests.vo.pagedmodels.PagedModelPerson;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -15,8 +16,6 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -185,7 +184,7 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.accept(TestConfigs.CONTENT_TYPE_XML)
-				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
 				.when()
 				.get()
 				.then()
@@ -194,19 +193,20 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 				.body()
 				.asString();
 
-		List<PersonVO> people = objectMapper.readerForListOf(PersonVO.class).readValue(content);
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
 
 		assertNotNull(people);
-		assertEquals(6, people.size());
 		assertNotNull(people.get(0).getId());
 		assertNotNull(people.get(0).getFirstName());
 		assertNotNull(people.get(0).getLastName());
 		assertNotNull(people.get(0).getAddress());
 		assertNotNull(people.get(0).getGender());
-		assertTrue(people.get(0).getEnabled());
+		assertFalse(people.get(0).getEnabled());
 		assertTrue(people.get(0).getId() > 0);
-		assertEquals("Iury Christmas", people.get(0).getFirstName());
-		assertEquals("R. Margarida Maria - Fortaleza CE", people.get(0).getAddress());
+		assertEquals("Alvie", people.get(0).getFirstName());
+		assertEquals("Veldens", people.get(0).getLastName());
+		assertEquals("90 Morningstar Drive", people.get(0).getAddress());
 		assertEquals("Male", people.get(0).getGender());
 
 		assertNotNull(people.get(1).getId());
@@ -214,10 +214,10 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 		assertNotNull(people.get(1).getLastName());
 		assertNotNull(people.get(1).getAddress());
 		assertNotNull(people.get(1).getGender());
-		assertEquals("Andrea", people.get(1).getFirstName());
-		assertEquals("Lima", people.get(1).getLastName());
-		assertEquals("R. Cristal - Fortaleza CE", people.get(1).getAddress());
-		assertEquals("Female", people.get(1).getGender());
+		assertEquals("Alvie", people.get(1).getFirstName());
+		assertEquals("Stellman", people.get(1).getLastName());
+		assertEquals("2460 Dawn Alley", people.get(1).getAddress());
+		assertEquals("Male", people.get(1).getGender());
 	}
 
 	@Test
@@ -303,6 +303,66 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 				.delete("{id}")
 				.then()
 				.statusCode(204);
+	}
+
+	@Test
+	@Order(9)
+	public void testFindByName() throws JsonProcessingException {
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.pathParam("firstName", "wendy")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.when()
+				.get("findPersonByName/{firstName}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
+
+		assertNotNull(people);
+		assertNotNull(people.get(0).getId());
+		assertNotNull(people.get(0).getFirstName());
+		assertNotNull(people.get(0).getLastName());
+		assertNotNull(people.get(0).getAddress());
+		assertNotNull(people.get(0).getGender());
+		assertTrue(people.get(0).getEnabled());
+		assertTrue(people.get(0).getId() > 0);
+		assertEquals("Wendy", people.get(0).getFirstName());
+		assertEquals("Veitch", people.get(0).getLastName());
+		assertEquals("104 Carberry Center", people.get(0).getAddress());
+		assertEquals("Female", people.get(0).getGender());
+	}
+
+	@Test
+	@Order(10)
+	public void testHATEOAS() {
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/person/v1/792</href></links>"));
+		assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/person/v1/269</href></links>"));
+		assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/person/v1/305</href></links>"));
+
+		assertTrue(content.contains("<page><size>10</size><totalElements>1005</totalElements><totalPages>101</totalPages><number>3</number></page>"));
+		assertTrue(content.contains("<links><rel>first</rel><href>http://localhost:8888/api/person/v1?direction=asc&amp;page=0&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>prev</rel><href>http://localhost:8888/api/person/v1?direction=asc&amp;page=2&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/person/v1?page=3&amp;size=10&amp;direction=asc</href></links>"));
+		assertTrue(content.contains("<links><rel>next</rel><href>http://localhost:8888/api/person/v1?direction=asc&amp;page=4&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>last</rel><href>http://localhost:8888/api/person/v1?direction=asc&amp;page=100&amp;size=10&amp;sort=firstName,asc</href></links>"));
 	}
 
 	private void mockPerson() {
