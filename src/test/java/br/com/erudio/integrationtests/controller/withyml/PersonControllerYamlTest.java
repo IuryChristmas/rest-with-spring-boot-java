@@ -314,6 +314,43 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(8)
+	public void testFindByName() {
+		var content = given()
+				.config(RestAssuredConfig.config()
+						.encoderConfig(EncoderConfig.encoderConfig()
+								.encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)))
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.pathParam("firstName", "wendy")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_IURY)
+				.when()
+				.get("findPersonByName/{firstName}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.as(PagedModelPerson.class, objectMapper);
+
+		var people = content.getContent();
+
+		assertNotNull(people);
+		assertNotNull(people.get(0).getId());
+		assertNotNull(people.get(0).getFirstName());
+		assertNotNull(people.get(0).getLastName());
+		assertNotNull(people.get(0).getAddress());
+		assertNotNull(people.get(0).getGender());
+		assertTrue(people.get(0).getEnabled());
+		assertTrue(people.get(0).getId() > 0);
+		assertEquals("Wendy", people.get(0).getFirstName());
+		assertEquals("Veitch", people.get(0).getLastName());
+		assertEquals("104 Carberry Center", people.get(0).getAddress());
+		assertEquals("Female", people.get(0).getGender());
+	}
+
+	@Test
+	@Order(9)
 	public void testHATEOAS() {
 		var unthreatedContent = given()
 				.config(RestAssuredConfig.config()

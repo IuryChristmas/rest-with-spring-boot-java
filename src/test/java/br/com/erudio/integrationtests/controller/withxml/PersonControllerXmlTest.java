@@ -307,6 +307,39 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(9)
+	public void testFindByName() throws JsonProcessingException {
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.pathParam("firstName", "wendy")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.when()
+				.get("findPersonByName/{firstName}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
+
+		assertNotNull(people);
+		assertNotNull(people.get(0).getId());
+		assertNotNull(people.get(0).getFirstName());
+		assertNotNull(people.get(0).getLastName());
+		assertNotNull(people.get(0).getAddress());
+		assertNotNull(people.get(0).getGender());
+		assertTrue(people.get(0).getEnabled());
+		assertTrue(people.get(0).getId() > 0);
+		assertEquals("Wendy", people.get(0).getFirstName());
+		assertEquals("Veitch", people.get(0).getLastName());
+		assertEquals("104 Carberry Center", people.get(0).getAddress());
+		assertEquals("Female", people.get(0).getGender());
+	}
+
+	@Test
+	@Order(10)
 	public void testHATEOAS() {
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
