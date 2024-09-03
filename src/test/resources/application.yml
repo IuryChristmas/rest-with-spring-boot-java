@@ -3,7 +3,7 @@ server:
 cors:
   originPatterns: http://localhost:3000,http://localhost:8080,https://iury.springtest.com
 file:
-  upload-dir: /projects/upload-tests
+  upload-dir: /home/runner/work/rest-with-spring-boot-java/upload-tests
 security:
   jwt:
     token:
