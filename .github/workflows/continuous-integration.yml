@@ -25,10 +25,10 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build Application JAR
-      working-directory: /rest-with-spring-boot-java
+      working-directory: .
       run: mvn clean package
     - name: Docker Compose Build
-      working-directory: /rest-with-spring-boot-java
+      working-directory: .
       run: docker compose build
 
     - name: Push to Docker Hub Container Registry
